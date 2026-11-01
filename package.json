@@ -1,0 +1,6 @@
+{
+  "name": "lef-scoring-starter",
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "node --test scoring/*.test.js" }
+}

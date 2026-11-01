@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create an Account | LIFE Empowerment Fund</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    .password-help,
+    .demo-note {
+      margin: 0;
+      font-size: 0.8rem;
+      line-height: 1.6;
+    }
+
+    .strength-meter {
+      width: 100%;
+      height: 8px;
+      margin-top: 6px;
+      accent-color: var(--green);
+    }
+
+    .strength-label {
+      margin: 0;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .form-error {
+      margin: 0;
+      color: #9b2424;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .form-error:empty {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <span class="deco deco-ring-lg" aria-hidden="true"></span>
+    <span class="deco deco-ring-sm" aria-hidden="true"></span>
+    <span class="deco deco-disc" aria-hidden="true"></span>
+
+    <header class="site-header">
+      <a class="brand" href="./index.html">
+        <svg
+          aria-hidden="true"
+          width="40"
+          height="40"
+          viewBox="0 0 40 40"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect width="40" height="40" rx="12" fill="#2A6A35"/>
+          <path d="M20 30V19" stroke="white"
+                stroke-width="2" stroke-linecap="round"/>
+          <path d="M20 19c0-4-3-6.5-7-6.5 0 4 3 6.5 7 6.5z"
+                stroke="white" stroke-width="2"
+                stroke-linejoin="round"/>
+          <path d="M20 23c0-3.5 2.6-5.5 6.5-5.5 0 3.5-2.6 5.5-6.5 5.5z"
+                stroke="white" stroke-width="2"
+                stroke-linejoin="round"/>
+        </svg>
+
+        <span class="brand-name">LIFE Empowerment Fund</span>
+      </a>
+
+      <nav class="site-nav" aria-label="Primary">
+        <a class="nav-link" href="./index.html">Sign in</a>
+      </nav>
+    </header>
+
+    <main class="signin-main">
+      <section class="welcome">
+        <span class="eyebrow">Get started</span>
+        <h1>Your next chapter starts here.</h1>
+        <p>
+          Create your account to begin your
+          LIFE Empowerment Fund application.
+        </p>
+      </section>
+
+      <section class="signin-card" aria-labelledby="register-heading">
+        <form id="register-form" novalidate>
+          <div class="card-head">
+            <h2 id="register-heading">Create an account</h2>
+            <p>Use your email as your username.</p>
+          </div>
+
+          <div class="field-group">
+            <label for="register-email">Email *</label>
+            <input
+              class="field"
+              id="register-email"
+              name="email"
+              type="email"
+              autocomplete="username"
+              placeholder="you@example.com"
+              required
+            >
+          </div>
+
+          <div class="field-group">
+            <label for="new-password">Create password *</label>
+
+            <div class="password-wrap">
+              <input
+                class="field field-password"
+                id="new-password"
+                name="password"
+                type="password"
+                autocomplete="new-password"
+                minlength="15"
+                aria-describedby="password-help strength-label"
+                required
+              >
+
+              <button
+                class="show-btn"
+                type="button"
+                data-toggle="new-password"
+                aria-label="Show new password"
+                aria-controls="new-password"
+                aria-pressed="false"
+              >
+                Show
+              </button>
+            </div>
+
+            <p class="password-help" id="password-help">
+              Use at least 15 characters. Try several unrelated words.
+              Avoid names, birthdays, and passwords you use elsewhere.
+              Spaces are allowed.
+            </p>
+
+            <meter
+              class="strength-meter"
+              id="strength-meter"
+              min="0"
+              max="4"
+              value="0"
+              aria-label="Estimated password strength"
+            ></meter>
+
+            <p class="strength-label" id="strength-label"
+               aria-live="polite">
+              Password strength: not entered
+            </p>
+          </div>
+
+          <div class="field-group">
+            <label for="confirm-password">Confirm password *</label>
+
+            <div class="password-wrap">
+              <input
+                class="field field-password"
+                id="confirm-password"
+                name="confirmPassword"
+                type="password"
+                autocomplete="new-password"
+                required
+              >
+
+              <button
+                class="show-btn"
+                type="button"
+                data-toggle="confirm-password"
+                aria-label="Show confirmed password"
+                aria-controls="confirm-password"
+                aria-pressed="false"
+              >
+                Show
+              </button>
+            </div>
+          </div>
+
+          <p class="form-error" id="register-error" role="alert"></p>
+
+          <button class="btn-primary" type="submit">
+            Continue to application
+          </button>
+
+          <p class="alt-action">
+            Already have an account?
+            <a href="./index.html">Sign in</a>
+          </p>
+
+          <p class="demo-note">
+            Demo only: use sample credentials. No account is created,
+            and your password is not saved or sent.
+          </p>
+        </form>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>&copy; 2026 LIFE Empowerment Fund</span>
+    </footer>
+  </div>
+
+  <script>
+    const form = document.getElementById('register-form');
+    const email = document.getElementById('register-email');
+    const password = document.getElementById('new-password');
+    const confirmation = document.getElementById('confirm-password');
+    const meter = document.getElementById('strength-meter');
+    const strengthLabel = document.getElementById('strength-label');
+    const error = document.getElementById('register-error');
+
+    // A simple visual estimate, not a security guarantee.
+    function updateStrength() {
+      const value = password.value;
+      let score = 0;
+
+      if (value.length > 0) score = 1;
+      if (value.length >= 15) score = 2;
+      if (value.length >= 20) score = 3;
+      if (value.length >= 25) score = 4;
+
+      // Downgrade obvious repetitions and common sequences.
+      const predictable =
+        /^(.)\1+$/u.test(value) ||
+        /password|123456|qwerty/i.test(value) ||
+        /^(.{1,6})\1+$/u.test(value);
+
+      if (predictable && value.length > 0) {
+        score = 1;
+      }
+
+      meter.value = score;
+
+      const labels = [
+        'not entered',
+        'weak',
+        'fair',
+        'good',
+        'strong'
+      ];
+
+      strengthLabel.textContent =
+        'Estimated password strength: ' + labels[score];
+    }
+
+    document.querySelectorAll('[data-toggle]').forEach(function (button) {
+      const field = document.getElementById(button.dataset.toggle);
+      const fieldName = field === password
+        ? 'new password'
+        : 'confirmed password';
+
+      button.addEventListener('click', function () {
+        const willShow = field.type === 'password';
+
+        field.type = willShow ? 'text' : 'password';
+        button.textContent = willShow ? 'Hide' : 'Show';
+        button.setAttribute('aria-pressed', String(willShow));
+        button.setAttribute(
+          'aria-label',
+          (willShow ? 'Hide ' : 'Show ') + fieldName
+        );
+      });
+    });
+
+    form.addEventListener('input', function () {
+      password.setCustomValidity('');
+      confirmation.setCustomValidity('');
+      error.textContent = '';
+      updateStrength();
+    });
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      email.value = email.value.trim();
+      password.setCustomValidity('');
+      confirmation.setCustomValidity('');
+
+      // Explicit length check also covers pasted or autofilled values.
+      if (password.value.length < 15) {
+        password.setCustomValidity(
+          'Please use a password with at least 15 characters.'
+        );
+      } else if (!password.value.trim()) {
+        password.setCustomValidity(
+          'Your password cannot contain only spaces.'
+        );
+      }
+
+      if (confirmation.value !== password.value) {
+        confirmation.setCustomValidity('Your passwords do not match.');
+      }
+
+      if (!form.reportValidity()) {
+        return;
+      }
+
+      // Demo navigation only. No credentials are stored or transmitted.
+      password.value = '';
+      confirmation.value = '';
+
+      window.location.href = './application.html';
+    });
+
+    // Clear password fields if this page returns from browser history.
+    window.addEventListener('pageshow', function () {
+      password.value = '';
+      confirmation.value = '';
+      updateStrength();
+    });
+  </script>
+</body>
+</html>

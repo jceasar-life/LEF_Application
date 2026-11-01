@@ -1,0 +1,1217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Loan Application | LIFE Empowerment Fund</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    .application-main {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      width: 100%;
+      max-width: 850px;
+      margin: 0 auto;
+      padding: 32px var(--gutter) 64px;
+    }
+
+    .application-heading {
+      margin-bottom: 28px;
+    }
+
+    .application-heading h1 {
+      color: var(--heading);
+      margin: 10px 0;
+      font-size: clamp(2rem, 5vw, 3rem);
+    }
+
+    .application-heading p {
+      line-height: 1.6;
+    }
+
+    .application-card {
+      padding: clamp(24px, 4vw, 40px);
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 24px;
+      box-shadow: 0 24px 60px rgba(42, 58, 45, 0.18);
+    }
+
+    .application-card h2,
+    .application-card h3 {
+      color: var(--heading);
+    }
+
+    .application-card h2 {
+      margin: 0 0 8px;
+    }
+
+    .section-description {
+      margin: 0 0 24px;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .step-label {
+      margin: 0 0 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 28px;
+    }
+
+    .form-actions button {
+      flex: 1;
+      height: auto;
+      min-height: 50px;
+      padding: 12px 16px;
+    }
+
+    .btn-secondary {
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--green);
+      background: transparent;
+      border: 1.5px solid var(--green);
+      border-radius: 50px;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(42, 106, 53, 0.08);
+    }
+
+    textarea.field {
+      height: auto;
+      min-height: 140px;
+      border-radius: 18px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .field-hint,
+    .application-note {
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .field-hint {
+      margin: 0;
+    }
+
+    .application-note {
+      margin: 24px 0 0;
+    }
+
+    .document-picker {
+      padding: 24px;
+      border: 2px dashed var(--teal);
+      border-radius: 18px;
+      background: rgba(168, 184, 158, 0.1);
+    }
+
+    .document-picker label {
+      display: block;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .document-picker input {
+      max-width: 100%;
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+
+    .document-picker input::file-selector-button {
+      margin-right: 12px;
+      padding: 10px 16px;
+      border: 0;
+      border-radius: 20px;
+      background: var(--green);
+      color: white;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .document-picker .field-hint {
+      margin-top: 12px;
+    }
+
+    .document-list {
+      list-style: none;
+      padding: 0;
+      margin: 20px 0 0;
+    }
+
+    .document-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(42, 58, 45, 0.15);
+    }
+
+    .document-info {
+      min-width: 0;
+    }
+
+    .document-name {
+      display: block;
+      font-weight: 500;
+      overflow-wrap: anywhere;
+    }
+
+    .document-size {
+      font-size: 0.8rem;
+    }
+
+    .small-button {
+      padding: 8px 12px;
+      border: 1px solid var(--green);
+      border-radius: 20px;
+      background: transparent;
+      color: var(--green);
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .small-button:hover {
+      background: rgba(42, 106, 53, 0.08);
+    }
+
+    .error-message {
+      color: #9b2424;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      white-space: pre-line;
+    }
+
+    .status-message {
+      color: var(--green-dark);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .error-message:empty,
+    .status-message:empty {
+      display: none;
+    }
+
+    .review-section {
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(42, 58, 45, 0.15);
+    }
+
+    .review-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .review-section-header h3 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .review-details {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+      gap: 10px 20px;
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+    .review-details dt {
+      font-weight: 500;
+    }
+
+    .review-details dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+
+    .review-documents {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 0.9rem;
+      overflow-wrap: anywhere;
+    }
+
+    .review-documents li {
+      margin-bottom: 8px;
+    }
+
+    .preview-complete {
+      padding: 24px 0;
+      text-align: center;
+    }
+
+    .completion-icon {
+      display: block;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 24px;
+      color: var(--green);
+    }
+
+    .preview-complete p {
+      max-width: 460px;
+      margin: 16px auto;
+      line-height: 1.7;
+    }
+
+    .return-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: auto;
+      height: auto;
+      min-height: 50px;
+      margin-top: 16px;
+      padding: 12px 24px;
+      text-decoration: none;
+    }
+
+    .return-link:hover {
+      color: white;
+    }
+
+    @media (max-width: 600px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-actions {
+        flex-direction: column;
+      }
+
+      .review-details {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+
+      .review-details dd {
+        margin-bottom: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <span class="deco deco-ring-lg" aria-hidden="true"></span>
+    <span class="deco deco-ring-sm" aria-hidden="true"></span>
+    <span class="deco deco-disc" aria-hidden="true"></span>
+
+    <header class="site-header">
+      <a class="brand" href="./index.html">
+        <svg
+          aria-hidden="true"
+          width="40"
+          height="40"
+          viewBox="0 0 40 40"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect width="40" height="40" rx="12" fill="#2A6A35"/>
+          <path
+            d="M20 30V19"
+            stroke="white"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+          <path
+            d="M20 19c0-4-3-6.5-7-6.5 0 4 3 6.5 7 6.5z"
+            stroke="white"
+            stroke-width="2"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M20 23c0-3.5 2.6-5.5 6.5-5.5 0 3.5-2.6 5.5-6.5 5.5z"
+            stroke="white"
+            stroke-width="2"
+            stroke-linejoin="round"
+          />
+        </svg>
+
+        <span class="brand-name">LIFE Empowerment Fund</span>
+      </a>
+    </header>
+
+    <main class="application-main">
+      <div class="application-heading" id="application-heading">
+        <span class="eyebrow">Loan application</span>
+        <h1>Let’s get started.</h1>
+        <p>Tell us a little about yourself and your funding needs.</p>
+      </div>
+
+      <section class="application-card" aria-label="Application details">
+        <p class="step-label" id="step-label" aria-live="polite">
+          Step 1 of 5: Personal information
+        </p>
+
+        <form id="application-form" novalidate>
+          <!-- STEP 1: PERSONAL INFORMATION -->
+          <div class="form-step" aria-labelledby="personal-heading">
+            <h2 id="personal-heading" tabindex="-1">
+              Personal information
+            </h2>
+
+            <p class="section-description">
+              Fields marked with * are required.
+            </p>
+
+            <div class="form-grid">
+              <div class="field-group">
+                <label for="first-name">First name *</label>
+                <input
+                  class="field"
+                  id="first-name"
+                  name="firstName"
+                  type="text"
+                  autocomplete="given-name"
+                  required
+                >
+              </div>
+
+              <div class="field-group">
+                <label for="last-name">Last name *</label>
+                <input
+                  class="field"
+                  id="last-name"
+                  name="lastName"
+                  type="text"
+                  autocomplete="family-name"
+                  required
+                >
+              </div>
+
+              <div class="field-group">
+                <label for="email">Email *</label>
+                <input
+                  class="field"
+                  id="email"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  placeholder="you@example.com"
+                  required
+                >
+              </div>
+
+              <div class="field-group">
+                <label for="phone">Phone number *</label>
+                <input
+                  class="field"
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  autocomplete="tel"
+                  placeholder="(555) 123-4567"
+                  required
+                >
+              </div>
+
+              <div class="field-group full-width">
+                <label for="address">Street address *</label>
+                <input
+                  class="field"
+                  id="address"
+                  name="address"
+                  type="text"
+                  autocomplete="address-line1"
+                  required
+                >
+              </div>
+
+              <div class="field-group full-width">
+                <label for="address-extra">
+                  Apartment, suite, or unit (optional)
+                </label>
+                <input
+                  class="field"
+                  id="address-extra"
+                  name="addressExtra"
+                  type="text"
+                  autocomplete="address-line2"
+                >
+              </div>
+
+              <div class="field-group">
+                <label for="city">City *</label>
+                <input
+                  class="field"
+                  id="city"
+                  name="city"
+                  type="text"
+                  autocomplete="address-level2"
+                  required
+                >
+              </div>
+
+              <div class="field-group">
+                <label for="state">State *</label>
+                <input
+                  class="field"
+                  id="state"
+                  name="state"
+                  type="text"
+                  autocomplete="address-level1"
+                  placeholder="Texas"
+                  required
+                >
+              </div>
+
+              <div class="field-group">
+                <label for="zip">ZIP code *</label>
+                <input
+                  class="field"
+                  id="zip"
+                  name="zip"
+                  type="text"
+                  autocomplete="postal-code"
+                  inputmode="numeric"
+                  pattern="[0-9]{5}(-[0-9]{4})?"
+                  title="Enter a five-digit ZIP code or ZIP+4."
+                  placeholder="75935"
+                  required
+                >
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn-primary" type="button" data-next>
+                Next: Financial information
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 2: FINANCIAL INFORMATION -->
+          <div class="form-step" aria-labelledby="financial-heading" hidden>
+            <h2 id="financial-heading" tabindex="-1">
+              Financial information
+            </h2>
+
+            <p class="section-description">
+              Fields marked with * are required.
+              Enter amounts in U.S. dollars.
+            </p>
+
+            <div class="form-grid">
+              <div class="field-group full-width">
+                <label for="employment">Employment status *</label>
+                <select
+                  class="field"
+                  id="employment"
+                  name="employmentStatus"
+                  required
+                >
+                  <option value="">Select your employment status</option>
+                  <option value="full-time">Employed full-time</option>
+                  <option value="part-time">Employed part-time</option>
+                  <option value="self-employed">Self-employed</option>
+                  <option value="unemployed">Unemployed</option>
+                  <option value="retired">Retired</option>
+                  <option value="student">Student</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div class="field-group full-width">
+                <label for="employer">
+                  Employer or business name (optional)
+                </label>
+                <input
+                  class="field"
+                  id="employer"
+                  name="employer"
+                  type="text"
+                  autocomplete="organization"
+                >
+              </div>
+
+              <div class="field-group">
+                <label for="income">Monthly income before taxes *</label>
+                <input
+                  class="field"
+                  id="income"
+                  name="monthlyIncome"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="0.00"
+                  required
+                >
+              </div>
+
+              <div class="field-group">
+                <label for="expenses">Monthly expenses *</label>
+                <input
+                  class="field"
+                  id="expenses"
+                  name="monthlyExpenses"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="0.00"
+                  required
+                >
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn-secondary" type="button" data-back>
+                Back
+              </button>
+
+              <button class="btn-primary" type="button" data-next>
+                Next: Loan details
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 3: LOAN DETAILS -->
+          <div class="form-step" aria-labelledby="loan-heading" hidden>
+            <h2 id="loan-heading" tabindex="-1">Loan details</h2>
+
+            <p class="section-description">
+              Tell us how much funding you need and how you plan to use it.
+              Fields marked with * are required.
+            </p>
+
+            <div class="form-grid">
+              <div class="field-group full-width">
+                <label for="loan-amount">Requested loan amount *</label>
+                <input
+                  class="field"
+                  id="loan-amount"
+                  name="loanAmount"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  placeholder="Enter amount in USD"
+                  aria-describedby="amount-hint"
+                  required
+                >
+                <p class="field-hint" id="amount-hint">
+                  Enter an amount greater than zero in U.S. dollars.
+                </p>
+              </div>
+
+              <div class="field-group full-width">
+                <label for="loan-purpose">Purpose of the loan *</label>
+                <select
+                  class="field"
+                  id="loan-purpose"
+                  name="loanPurpose"
+                  required
+                >
+                  <option value="">Select a purpose</option>
+                  <option value="business-startup">Start a business</option>
+                  <option value="business-expansion">Expand a business</option>
+                  <option value="equipment">Purchase equipment</option>
+                  <option value="inventory">Purchase inventory</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div class="field-group full-width">
+                <label for="loan-description">
+                  How will you use the funds? *
+                </label>
+                <textarea
+                  class="field"
+                  id="loan-description"
+                  name="loanDescription"
+                  rows="5"
+                  maxlength="2000"
+                  placeholder="Briefly explain what the funding will help you accomplish."
+                  aria-describedby="description-hint"
+                  required
+                ></textarea>
+                <p class="field-hint" id="description-hint">
+                  Maximum 2,000 characters.
+                </p>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn-secondary" type="button" data-back>
+                Back
+              </button>
+
+              <button class="btn-primary" type="button" data-next>
+                Next: Supporting documents
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 4: SUPPORTING DOCUMENTS -->
+          <div class="form-step" aria-labelledby="documents-heading" hidden>
+            <h2 id="documents-heading" tabindex="-1">
+              Supporting documents
+            </h2>
+
+            <p class="section-description">
+              Select documents such as pay stubs or business documentation.
+              Document requirements will be confirmed with LIFE staff.
+              Selection is optional in this prototype.
+            </p>
+
+            <div class="document-picker">
+              <label for="documents">Choose supporting documents</label>
+              <input
+                id="documents"
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                multiple
+                aria-describedby="document-hint document-errors"
+              >
+
+              <p class="field-hint" id="document-hint">
+                PDF, JPG, or PNG. Maximum 5 MB per file and 5 files total.
+                You can choose files more than once to add to your list.
+              </p>
+            </div>
+
+            <p
+              id="document-errors"
+              class="error-message"
+              role="alert"
+            ></p>
+
+            <p
+              id="document-status"
+              class="status-message"
+              role="status"
+            ></p>
+
+            <ul
+              class="document-list"
+              id="document-list"
+              aria-label="Selected documents"
+            ></ul>
+
+            <div class="form-actions">
+              <button class="btn-secondary" type="button" data-back>
+                Back
+              </button>
+
+              <button class="btn-primary" type="button" data-next>
+                Next: Review application
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 5: REVIEW -->
+          <div class="form-step" aria-labelledby="review-heading" hidden>
+            <h2 id="review-heading" tabindex="-1">
+              Review application
+            </h2>
+
+            <p class="section-description">
+              Check your information below. Use Edit to make changes.
+              Finish preview completes this demonstration only.
+            </p>
+
+            <div id="review-content"></div>
+
+            <div class="form-actions">
+              <button class="btn-secondary" type="button" data-back>
+                Back
+              </button>
+
+              <button class="btn-primary" type="submit">
+                Finish preview
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <!-- COMPLETION SCREEN -->
+        <section
+          class="preview-complete"
+          id="preview-complete"
+          aria-labelledby="completion-heading"
+          hidden
+        >
+          <svg
+            class="completion-icon"
+            viewBox="0 0 80 80"
+            fill="none"
+            aria-hidden="true"
+          >
+            <circle
+              cx="40"
+              cy="40"
+              r="38"
+              fill="currentColor"
+              opacity="0.12"
+            />
+            <path
+              d="M23 40L35 52L57 29"
+              stroke="currentColor"
+              stroke-width="5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+
+          <h2 id="completion-heading" tabindex="-1">
+            Application preview complete!
+          </h2>
+
+          <p>
+            You’ve completed all the steps in this demonstration.
+          </p>
+
+          <p>
+            This was a preview only. No account or application was saved,
+            no documents were uploaded, and nothing was sent to
+            LIFE Empowerment Fund.
+          </p>
+
+          <a class="btn-primary return-link" href="./index.html">
+            Return to sign in
+          </a>
+        </section>
+
+        <p class="application-note" id="application-note">
+          Prototype: information and selected files stay in this page only.
+          Nothing is saved, uploaded, or submitted.
+          Refreshing may clear entries.
+        </p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>&copy; 2026 LIFE Empowerment Fund</span>
+    </footer>
+  </div>
+
+  <script>
+    const form = document.getElementById('application-form');
+    const steps = Array.from(form.querySelectorAll('.form-step'));
+    const stepLabel = document.getElementById('step-label');
+
+    const fileInput = document.getElementById('documents');
+    const fileList = document.getElementById('document-list');
+    const fileErrors = document.getElementById('document-errors');
+    const fileStatus = document.getElementById('document-status');
+    const reviewContent = document.getElementById('review-content');
+
+    const stepNames = [
+      'Personal information',
+      'Financial information',
+      'Loan details',
+      'Supporting documents',
+      'Review application'
+    ];
+
+    const maxFileSize = 5 * 1024 * 1024;
+    const maxFiles = 5;
+
+    const allowedTypes = new Map([
+      ['pdf', 'application/pdf'],
+      ['jpg', 'image/jpeg'],
+      ['jpeg', 'image/jpeg'],
+      ['png', 'image/png']
+    ]);
+
+    const currency = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    });
+
+    let currentStep = 0;
+    let selectedFiles = [];
+    let previewFinished = false;
+
+    function showStep(index) {
+      currentStep = index;
+
+      if (index === steps.length - 1) {
+        buildReview();
+      }
+
+      steps.forEach(function (step, stepIndex) {
+        step.hidden = stepIndex !== index;
+      });
+
+      stepLabel.textContent =
+        `Step ${index + 1} of ${steps.length}: ${stepNames[index]}`;
+
+      steps[index].querySelector('h2').focus();
+    }
+
+    function getInvalidField(step) {
+      const fields = step.querySelectorAll(
+        'input:not([type="file"]), select, textarea'
+      );
+
+      for (const field of fields) {
+        field.setCustomValidity('');
+
+        const isTextField =
+          field.tagName === 'TEXTAREA' ||
+          field.type === 'text' ||
+          field.type === 'tel';
+
+        if (isTextField && field.required && !field.value.trim()) {
+          field.setCustomValidity('Please complete this field.');
+        }
+
+        if (!field.checkValidity()) {
+          return field;
+        }
+      }
+
+      return null;
+    }
+
+    function goNext() {
+      if (previewFinished) return;
+
+      const invalidField = getInvalidField(steps[currentStep]);
+
+      if (invalidField) {
+        invalidField.reportValidity();
+        return;
+      }
+
+      if (currentStep < steps.length - 1) {
+        showStep(currentStep + 1);
+      }
+    }
+
+    form.querySelectorAll('[data-next]').forEach(function (button) {
+      button.addEventListener('click', goNext);
+    });
+
+    form.querySelectorAll('[data-back]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        if (currentStep > 0) {
+          showStep(currentStep - 1);
+        }
+      });
+    });
+
+    function formatFileSize(bytes) {
+      if (bytes < 1024) {
+        return `${bytes} bytes`;
+      }
+
+      if (bytes < 1024 * 1024) {
+        return `${(bytes / 1024).toFixed(1)} KB`;
+      }
+
+      return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    }
+
+    function renderFiles() {
+      fileList.replaceChildren();
+
+      selectedFiles.forEach(function (file, index) {
+        const item = document.createElement('li');
+        item.className = 'document-item';
+
+        const info = document.createElement('div');
+        info.className = 'document-info';
+
+        const name = document.createElement('span');
+        name.className = 'document-name';
+        name.textContent = file.name;
+
+        const size = document.createElement('span');
+        size.className = 'document-size';
+        size.textContent = formatFileSize(file.size);
+
+        const removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.className = 'small-button';
+        removeButton.textContent = 'Remove';
+        removeButton.setAttribute('aria-label', `Remove ${file.name}`);
+
+        removeButton.addEventListener('click', function () {
+          selectedFiles.splice(index, 1);
+          fileErrors.textContent = '';
+          renderFiles();
+
+          fileStatus.textContent =
+            `${file.name} removed. ` +
+            `${selectedFiles.length} file(s) selected.`;
+
+          const remainingButtons = fileList.querySelectorAll('button');
+          const nextFocus = remainingButtons[
+            Math.min(index, remainingButtons.length - 1)
+          ];
+
+          (nextFocus || fileInput).focus();
+        });
+
+        info.append(name, size);
+        item.append(info, removeButton);
+        fileList.append(item);
+      });
+    }
+
+    fileInput.addEventListener('change', function () {
+      const errors = [];
+      let addedCount = 0;
+
+      for (const file of Array.from(fileInput.files)) {
+        const extension = file.name.split('.').pop().toLowerCase();
+        const expectedType = allowedTypes.get(extension);
+
+        if (!expectedType || (file.type && file.type !== expectedType)) {
+          errors.push(`${file.name}: choose a PDF, JPG, or PNG file.`);
+          continue;
+        }
+
+        if (file.size === 0) {
+          errors.push(`${file.name}: this file is empty.`);
+          continue;
+        }
+
+        if (file.size > maxFileSize) {
+          errors.push(`${file.name}: exceeds the 5 MB limit.`);
+          continue;
+        }
+
+        const duplicate = selectedFiles.some(function (existing) {
+          return existing.name === file.name &&
+            existing.size === file.size &&
+            existing.lastModified === file.lastModified;
+        });
+
+        if (duplicate) {
+          errors.push(`${file.name}: already selected.`);
+          continue;
+        }
+
+        if (selectedFiles.length >= maxFiles) {
+          errors.push(`${file.name}: only 5 files can be selected.`);
+          continue;
+        }
+
+        selectedFiles.push(file);
+        addedCount++;
+      }
+
+      fileErrors.textContent = errors.join('\n');
+      renderFiles();
+
+      fileStatus.textContent =
+        `${addedCount} file(s) added. ` +
+        `${selectedFiles.length} file(s) selected locally; not uploaded.`;
+
+      // Allow choosing the same file again after removing it.
+      fileInput.value = '';
+    });
+
+    function fieldValue(id) {
+      const field = document.getElementById(id);
+
+      if (field.tagName === 'SELECT') {
+        return field.value
+          ? field.options[field.selectedIndex].textContent
+          : 'Not provided';
+      }
+
+      return field.value.trim() || 'Not provided';
+    }
+
+    function moneyValue(id) {
+      const value = document.getElementById(id).value;
+
+      return value === ''
+        ? 'Not provided'
+        : currency.format(Number(value));
+    }
+
+    function createReviewSection(title, stepIndex) {
+      const section = document.createElement('section');
+      section.className = 'review-section';
+
+      const header = document.createElement('div');
+      header.className = 'review-section-header';
+
+      const heading = document.createElement('h3');
+      heading.textContent = title;
+
+      const editButton = document.createElement('button');
+      editButton.type = 'button';
+      editButton.className = 'small-button';
+      editButton.textContent = 'Edit';
+      editButton.setAttribute(
+        'aria-label',
+        `Edit ${title.toLowerCase()}`
+      );
+
+      editButton.addEventListener('click', function () {
+        showStep(stepIndex);
+      });
+
+      header.append(heading, editButton);
+      section.append(header);
+      reviewContent.append(section);
+
+      return section;
+    }
+
+    function addReviewDetails(section, rows) {
+      const details = document.createElement('dl');
+      details.className = 'review-details';
+
+      rows.forEach(function (row) {
+        const label = document.createElement('dt');
+        label.textContent = row[0];
+
+        const value = document.createElement('dd');
+        value.textContent = row[1];
+
+        details.append(label, value);
+      });
+
+      section.append(details);
+    }
+
+    function buildReview() {
+      reviewContent.replaceChildren();
+
+      const personal = createReviewSection('Personal information', 0);
+
+      addReviewDetails(personal, [
+        ['First name', fieldValue('first-name')],
+        ['Last name', fieldValue('last-name')],
+        ['Email', fieldValue('email')],
+        ['Phone', fieldValue('phone')],
+        ['Street address', fieldValue('address')],
+        ['Apartment / unit', fieldValue('address-extra')],
+        ['City', fieldValue('city')],
+        ['State', fieldValue('state')],
+        ['ZIP code', fieldValue('zip')]
+      ]);
+
+      const financial = createReviewSection('Financial information', 1);
+
+      addReviewDetails(financial, [
+        ['Employment status', fieldValue('employment')],
+        ['Employer / business', fieldValue('employer')],
+        ['Monthly income before taxes', moneyValue('income')],
+        ['Monthly expenses', moneyValue('expenses')]
+      ]);
+
+      const loan = createReviewSection('Loan details', 2);
+
+      addReviewDetails(loan, [
+        ['Requested amount', moneyValue('loan-amount')],
+        ['Loan purpose', fieldValue('loan-purpose')],
+        ['Use of funds', fieldValue('loan-description')]
+      ]);
+
+      const documents = createReviewSection('Supporting documents', 3);
+
+      if (selectedFiles.length === 0) {
+        const empty = document.createElement('p');
+        empty.textContent = 'No documents selected.';
+        documents.append(empty);
+      } else {
+        const list = document.createElement('ul');
+        list.className = 'review-documents';
+
+        selectedFiles.forEach(function (file) {
+          const item = document.createElement('li');
+          item.textContent =
+            `${file.name} (${formatFileSize(file.size)}) — selected locally`;
+
+          list.append(item);
+        });
+
+        documents.append(list);
+      }
+    }
+
+    form.addEventListener('input', function (event) {
+      if (typeof event.target.setCustomValidity === 'function') {
+        event.target.setCustomValidity('');
+      }
+    });
+
+    // Enter advances from an input field.
+    // Enter in the textarea still creates a new line.
+    form.addEventListener('keydown', function (event) {
+      if (
+        event.key === 'Enter' &&
+        event.target.tagName === 'INPUT' &&
+        event.target.type !== 'file' &&
+        !event.isComposing
+      ) {
+        event.preventDefault();
+        form.requestSubmit();
+      }
+    });
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      if (previewFinished) return;
+
+      if (currentStep < steps.length - 1) {
+        goNext();
+        return;
+      }
+
+      // Validate earlier sections before completing the preview.
+      for (let index = 0; index < steps.length - 1; index++) {
+        const invalidField = getInvalidField(steps[index]);
+
+        if (invalidField) {
+          showStep(index);
+          invalidField.reportValidity();
+          return;
+        }
+      }
+
+      previewFinished = true;
+
+      form.hidden = true;
+      stepLabel.hidden = true;
+      document.getElementById('application-heading').hidden = true;
+      document.getElementById('application-note').hidden = true;
+
+      document.getElementById('preview-complete').hidden = false;
+      document.getElementById('completion-heading').focus();
+    });
+  </script>
+</body>
+</html>

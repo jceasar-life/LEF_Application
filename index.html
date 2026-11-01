@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in | LIFE Empowerment Fund</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="page">
+    <span class="deco deco-ring-lg" aria-hidden="true"></span>
+    <span class="deco deco-ring-sm" aria-hidden="true"></span>
+    <span class="deco deco-disc" aria-hidden="true"></span>
+
+    <header class="site-header">
+      <a class="brand" href="./">
+        <!-- Replace this SVG with your real logo when available. -->
+        <svg
+          aria-hidden="true"
+          width="40"
+          height="40"
+          viewBox="0 0 40 40"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect width="40" height="40" rx="12" fill="#2A6A35"/>
+          <path
+            d="M20 30V19"
+            stroke="#FFFFFF"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+          <path
+            d="M20 19c0-4-3-6.5-7-6.5 0 4 3 6.5 7 6.5z"
+            stroke="#FFFFFF"
+            stroke-width="2"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M20 23c0-3.5 2.6-5.5 6.5-5.5 0 3.5-2.6 5.5-6.5 5.5z"
+            stroke="#FFFFFF"
+            stroke-width="2"
+            stroke-linejoin="round"
+          />
+        </svg>
+
+        <span class="brand-name">LIFE Empowerment Fund</span>
+      </a>
+
+      <nav class="site-nav" aria-label="Primary">
+        <a class="nav-link" href="/about">About</a>
+        <a class="nav-link" href="/privacy">Privacy Policy</a>
+      </nav>
+    </header>
+
+    <main class="signin-main">
+      <section class="welcome">
+        <span class="eyebrow">Member sign in</span>
+        <h1>Welcome back.</h1>
+        <p>
+          Sign in to continue to your LIFE Empowerment Fund account.
+        </p>
+      </section>
+
+      <section class="signin-card" aria-labelledby="signin-heading">
+        <form id="signin-form" novalidate>
+          <div class="card-head">
+            <h2 id="signin-heading">Sign in</h2>
+            <p>Enter your details to access your account.</p>
+          </div>
+
+          <div class="field-group">
+            <label for="email">Email</label>
+            <input
+              class="field"
+              id="email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              placeholder="you@example.com"
+              required
+            >
+          </div>
+
+          <div class="field-group">
+            <label for="password">Password</label>
+
+            <div class="password-wrap">
+              <input
+                class="field field-password"
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                placeholder="Enter your password"
+                required
+              >
+
+              <button
+                class="show-btn"
+                id="toggle-password"
+                type="button"
+                aria-label="Show password"
+                aria-controls="password"
+                aria-pressed="false"
+              >
+                Show
+              </button>
+            </div>
+          </div>
+
+          <div class="options-row">
+            <div class="remember">
+              <input id="remember" name="remember" type="checkbox">
+              <label for="remember">Keep me signed in</label>
+            </div>
+
+            <a href="#">Forgot password?</a>
+          </div>
+
+          <button class="btn-primary" type="submit">
+            Sign in
+          </button>
+
+          <p class="alt-action">
+            New to LIFE Empowerment Fund?
+            <a href="./register.html">Create an account</a>
+          </p>
+
+          <p class="alt-action">
+            Demo only: use a sample email and password.
+            Account verification and “Keep me signed in” are not connected yet.
+          </p>
+        </form>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>&copy; 2026 LIFE Empowerment Fund</span>
+      <a href="/privacy">Privacy Policy</a>
+    </footer>
+  </div>
+
+  <script>
+    // Show or hide the password.
+    const password = document.getElementById('password');
+    const toggle = document.getElementById('toggle-password');
+
+    toggle.addEventListener('click', function () {
+      const showing = password.type === 'text';
+
+      password.type = showing ? 'password' : 'text';
+      toggle.textContent = showing ? 'Show' : 'Hide';
+
+      toggle.setAttribute(
+        'aria-label',
+        showing ? 'Show password' : 'Hide password'
+      );
+
+      toggle.setAttribute('aria-pressed', String(!showing));
+    });
+
+    // Demo navigation only — no authentication or credential storage.
+    const signinForm = document.getElementById('signin-form');
+
+    signinForm.addEventListener('submit', function (event) {
+  event.preventDefault();
+
+  if (!signinForm.reportValidity()) {
+    return;
+  }
+
+  alert('Account sign-in is not connected yet.');
+});
+  </script>
+</body>
+</html>

@@ -324,9 +324,10 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="lef-design.css">
 </head>
 
-<body>
+<body class="lef-application">
   <div class="page">
     <span class="deco deco-ring-lg" aria-hidden="true"></span>
     <span class="deco deco-ring-sm" aria-hidden="true"></span>
@@ -334,51 +335,43 @@
 
     <header class="site-header">
       <a class="brand" href="./index.html">
-        <svg
-          aria-hidden="true"
-          width="40"
-          height="40"
-          viewBox="0 0 40 40"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <rect width="40" height="40" rx="12" fill="#2A6A35"/>
-          <path
-            d="M20 30V19"
-            stroke="white"
-            stroke-width="2"
-            stroke-linecap="round"
-          />
-          <path
-            d="M20 19c0-4-3-6.5-7-6.5 0 4 3 6.5 7 6.5z"
-            stroke="white"
-            stroke-width="2"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M20 23c0-3.5 2.6-5.5 6.5-5.5 0 3.5-2.6 5.5-6.5 5.5z"
-            stroke="white"
-            stroke-width="2"
-            stroke-linejoin="round"
-          />
-        </svg>
-
-        <span class="brand-name">LIFE Empowerment Fund</span>
+        <img class="lef-logo" src="assets/lef-logo.png" alt="Life Empowerment Fund" width="800" height="386">
       </a>
+      <nav class="site-nav" aria-label="Primary">
+        <a class="nav-link" href="index.html">Home</a>
+        <a class="nav-link" href="application.html" aria-current="page">My Application</a>
+        <a class="nav-link" href="application-status.html">Application Status</a>
+      </nav>
     </header>
 
     <main class="application-main">
       <div class="application-heading" id="application-heading">
-        <span class="eyebrow">Loan application</span>
-        <h1>Let’s get started.</h1>
-        <p>Tell us a little about yourself and your funding needs.</p>
+        <h1>Loan Application</h1>
+        <p>Complete each section at your own pace. You can save your draft and come back later.</p>
       </div>
 
+      <div class="application-layout">
+      <aside class="application-progress" id="application-progress" aria-label="Application progress">
+        <h2>Your progress</h2>
+        <ol>
+          <li aria-current="step">Personal information</li>
+          <li>Financial information</li>
+          <li>Loan details</li>
+          <li>Supporting documents</li>
+          <li>Review application</li>
+        </ol>
+      </aside>
       <section class="application-card" aria-label="Application details">
         <p class="step-label" id="step-label" aria-live="polite">
           Step 1 of 5: Personal information
         </p>
 
+        <div class="application-toolbar">
+          <button class="btn-secondary" type="button" id="save-draft" disabled>Save draft</button>
+          <a class="btn-secondary" href="./application-status.html">View application status</a>
+          <button class="btn-secondary" type="button" id="sign-out" disabled>Sign out</button>
+          <p id="draft-message" role="status" aria-live="polite">Checking your account…</p>
+        </div>
         <form id="application-form" novalidate>
           <!-- STEP 1: PERSONAL INFORMATION -->
           <div class="form-step" aria-labelledby="personal-heading">
@@ -602,6 +595,14 @@
           <!-- STEP 3: LOAN DETAILS -->
           <div class="form-step" aria-labelledby="loan-heading" hidden>
             <h2 id="loan-heading" tabindex="-1">Loan details</h2>
+            <div class="field-group">
+              <label for="loan-type">Loan type *</label>
+              <select class="field" id="loan-type" name="loanType" required>
+                <option value="">Select loan type</option>
+                <option value="Personal">Personal</option>
+                <option value="Business">Business</option>
+              </select>
+            </div>
 
             <p class="section-description">
               Tell us how much funding you need and how you plan to use it.
@@ -684,7 +685,7 @@
             <p class="section-description">
               Select documents such as pay stubs or business documentation.
               Document requirements will be confirmed with LIFE staff.
-              Selection is optional in this prototype.
+              Choose a document type, then click Upload selected files to save your selections.
             </p>
 
             <div class="document-picker">
@@ -698,7 +699,7 @@
               >
 
               <p class="field-hint" id="document-hint">
-                PDF, JPG, or PNG. Maximum 5 MB per file and 5 files total.
+                PDF, JPG, or PNG. Maximum 5 MB per file and 5 files per selection batch.
                 You can choose files more than once to add to your list.
               </p>
             </div>
@@ -721,6 +722,20 @@
               aria-label="Selected documents"
             ></ul>
 
+            <div class="field-group">
+              <label for="document-type">Type for selected files</label>
+              <select id="document-type" class="field">
+                <option value="">Select document type</option>
+                <option value="income">Income</option>
+                <option value="identity">Identification</option>
+                <option value="business">Business documentation</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <button type="button" class="btn-primary" id="upload-documents" disabled>Upload selected files</button>
+            <p id="upload-message" role="status" aria-live="polite">Save a draft before uploading.</p>
+            <h3>Uploaded documents</h3>
+            <ul id="uploaded-documents"></ul>
             <div class="form-actions">
               <button class="btn-secondary" type="button" data-back>
                 Back
@@ -744,6 +759,23 @@
             </p>
 
             <div id="review-content"></div>
+            <section class="review-section">
+              <h3>Submit a test application</h3>
+              <p>Official submission is not available yet. This sends a labeled TEST application to the staff queue and makes it read-only. It does not request a real loan or authorize a credit check.</p>
+              <label><input type="checkbox" id="demo-submit-confirm"> This is test data and I want to submit it for a staff workflow test.</label>
+              <button type="button" id="submit-demo" class="btn-primary">Submit TEST application</button>
+              <p id="submission-message" role="status">Available only to configured applicant test accounts.</p>
+            </section>
+            <section class="review-section" aria-labelledby="demo-sign-heading">
+              <h3 id="demo-sign-heading">Electronic signing — not configured</h3>
+              <p>Demo only. Sign a summary of your name, draft ID, loan type, and requested amount. This does not authorize a credit check or submit your application.</p>
+              <label><input type="checkbox" id="demo-sign-consent"> I understand this is a signing demonstration only.</label>
+              <div class="form-actions">
+                <button type="button" class="btn-primary" id="demo-sign" disabled>Sign demo document</button>
+                <button type="button" class="btn-secondary" id="demo-check" disabled>Check demo signature</button>
+              </div>
+              <p id="demo-sign-message" role="status">Signing is not connected: the required server-side Edge Function has not been deployed. This does not block the explicitly labeled TEST submission, which is not an official signed application.</p>
+            </section>
 
             <div class="form-actions">
               <button class="btn-secondary" type="button" data-back>
@@ -795,9 +827,7 @@
           </p>
 
           <p>
-            This was a preview only. No account or application was saved,
-            no documents were uploaded, and nothing was sent to
-            LIFE Empowerment Fund.
+            Finishing this preview does not submit your application. Only changes saved with Save draft and files confirmed in Uploaded documents are stored.
           </p>
 
           <a class="btn-primary return-link" href="./index.html">
@@ -806,11 +836,11 @@
         </section>
 
         <p class="application-note" id="application-note">
-          Prototype: information and selected files stay in this page only.
-          Nothing is saved, uploaded, or submitted.
-          Refreshing may clear entries.
+          Use Save draft for your information and Upload selected files for documents.
+          Unsaved changes and selected files may be lost when you refresh. Nothing has been submitted.
         </p>
       </section>
+      </div>
     </main>
 
     <footer class="site-footer">
@@ -822,6 +852,8 @@
     const form = document.getElementById('application-form');
     const steps = Array.from(form.querySelectorAll('.form-step'));
     const stepLabel = document.getElementById('step-label');
+    const progress = document.getElementById('application-progress');
+    const progressSteps = progress.querySelectorAll('li');
 
     const fileInput = document.getElementById('documents');
     const fileList = document.getElementById('document-list');
@@ -854,6 +886,19 @@
 
     let currentStep = 0;
     let selectedFiles = [];
+    let uploadedDocuments = [];
+    document.addEventListener('lef:get-selected-files', function(event) {
+      event.detail.files = selectedFiles.slice();
+    });
+    document.addEventListener('lef:file-uploaded', function(event) {
+      selectedFiles = selectedFiles.filter(file => file !== event.detail.file);
+      renderFiles();
+      fileStatus.textContent = `${selectedFiles.length} file(s) awaiting upload.`;
+    });
+    document.addEventListener('lef:uploaded-documents', function(event) {
+      uploadedDocuments = event.detail.documents;
+      if (currentStep === steps.length - 1) buildReview();
+    });
     let previewFinished = false;
 
     function showStep(index) {
@@ -869,6 +914,11 @@
 
       stepLabel.textContent =
         `Step ${index + 1} of ${steps.length}: ${stepNames[index]}`;
+
+      progressSteps.forEach(function (item, stepIndex) {
+        if (stepIndex === index) item.setAttribute('aria-current', 'step');
+        else item.removeAttribute('aria-current');
+      });
 
       steps[index].querySelector('h2').focus();
     }
@@ -1134,16 +1184,22 @@
       const loan = createReviewSection('Loan details', 2);
 
       addReviewDetails(loan, [
+        ['Loan type', fieldValue('loan-type')],
         ['Requested amount', moneyValue('loan-amount')],
         ['Loan purpose', fieldValue('loan-purpose')],
         ['Use of funds', fieldValue('loan-description')]
       ]);
 
       const documents = createReviewSection('Supporting documents', 3);
+      uploadedDocuments.forEach(function(doc) {
+        const item = document.createElement('p');
+        item.textContent = `${doc.original_filename} — uploaded (${doc.document_type})`;
+        documents.append(item);
+      });
 
       if (selectedFiles.length === 0) {
         const empty = document.createElement('p');
-        empty.textContent = 'No documents selected.';
+        empty.textContent = uploadedDocuments.length ? 'No additional files awaiting upload.' : 'No documents selected or uploaded.';
         documents.append(empty);
       } else {
         const list = document.createElement('ul');
@@ -1206,6 +1262,7 @@
 
       form.hidden = true;
       stepLabel.hidden = true;
+      progress.hidden = true;
       document.getElementById('application-heading').hidden = true;
       document.getElementById('application-note').hidden = true;
 
@@ -1213,5 +1270,6 @@
       document.getElementById('completion-heading').focus();
     });
   </script>
+<script type="module" src="./js/application-draft.js"></script>
 </body>
 </html>

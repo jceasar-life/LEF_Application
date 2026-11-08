@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LEF | Staff Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="lef-design.css">
+</head>
+<body data-role="staff">
+  <aside class="sidebar">
+    <a class="brand" href="index.html">
+      <img class="lef-logo" src="assets/lef-logo.png" alt="Life Empowerment Fund" width="800" height="386">
+    </a>
+
+    <nav aria-label="Staff navigation">
+      <button class="nav-link active" data-page="overview">▦ <span>Overview</span></button>
+      <button class="nav-link" data-page="applications">▤ <span>Applications</span></button>
+      <button class="nav-link" data-page="review">◷ <span>Review Queue</span></button>
+      <button class="nav-link" data-page="decisions">✓ <span>Decisions</span></button>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="user-mini">
+        <div class="avatar">JS</div>
+        <div><strong>Staff member</strong><small>Loan Review Staff</small></div>
+      </div>
+      <a class="logout" href="index.html">← Sign out</a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">LIFE EMPOWERMENT FUND / STAFF</p>
+        <h1 id="page-title">Staff Dashboard</h1>
+      </div>
+      <div class="topbar-right">
+        <span class="today" id="today"></span>
+        <div class="avatar">JS</div>
+      </div>
+    </header>
+
+    <p id="staff-message" role="status">Checking staff access…</p><div id="staff-workspace" hidden>
+<section class="page active" id="overview">
+      <div class="welcome">
+        <div>
+          <h2>Welcome to your staff workspace</h2>
+          <p>Here's what's happening with your loan applications today.</p>
+        </div>
+        <button class="primary-btn" data-go="applications">View applications →</button>
+      </div>
+
+      <div class="stats-grid">
+        <article class="stat-card"><span>Total applications</span><strong id="total-count">0</strong><small>Submitted applications on this page</small></article>
+        <article class="stat-card"><span>Awaiting review</span><strong id="pending-count">0</strong><small>Applications needing attention</small></article>
+        <article class="stat-card"><span>Additional information</span><strong id="info-count">0</strong><small>Not connected</small></article>
+        <article class="stat-card"><span>Decisions made</span><strong id="decision-count">0</strong><small>Approved or declined</small></article>
+      </div>
+
+      <div class="content-grid">
+        <section class="panel">
+          <div class="panel-heading">
+            <div><h3>Applications needing attention</h3><p>Oldest pending submissions within the loaded page.</p></div>
+            <button class="text-btn" data-go="review">View queue →</button>
+          </div>
+          <div id="overview-queue"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading"><div><h3>Review reminders</h3><p>Keep the process moving.</p></div></div>
+          <div class="reminder"><span class="reminder-icon">!</span><div><strong>Review applications</strong><p>Check submitted applications and update their status.</p></div></div>
+          <div class="reminder"><span class="reminder-icon">✉</span><div><strong>Follow up with applicants</strong><p>Request missing information when needed.</p></div></div>
+          <div class="reminder"><span class="reminder-icon">✓</span><div><strong>Record your decisions</strong><p>Include a reason when approving or declining.</p></div></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="page" id="applications">
+      <div class="section-intro"><div><h2>Loan Applications</h2><p>Review submitted applications and update their progress.</p></div></div>
+      <div class="toolbar">
+        <input id="application-search" type="search" placeholder="Search applicant or application ID...">
+        <select id="status-filter">
+          <option value="all">All statuses</option>
+          <option value="submitted">Submitted</option>
+          <option value="under_review">Under Review</option>
+
+          <option value="approved">Approved</option>
+          <option value="declined">Declined</option>
+        </select>
+      </div>
+      <div class="toolbar"><button id="queue-prev" disabled>Previous</button><span id="queue-page"></span><button id="queue-next" disabled>Next</button><button id="queue-refresh">Refresh</button></div><div class="panel table-panel"><div id="applications-table"></div></div>
+    </section>
+
+    <section class="page" id="review">
+      <div class="section-intro"><div><h2>Review Queue</h2><p>Applications that still need your attention.</p></div></div>
+      <div class="panel"><h3>Accessible review queue</h3><div id="review-queue"></div></div>
+    </section>
+
+    <section class="page" id="decisions">
+      <div class="section-intro"><div><h2>Decision History</h2><p>Review decisions recorded by staff.</p></div></div>
+      <div class="panel"><div id="decisions-table"></div></div>
+    </section>
+</div>
+  </main>
+
+  <div class="modal-backdrop" id="review-modal">
+    <div class="modal">
+      <button class="modal-close" id="close-modal">×</button>
+      <p class="eyebrow">APPLICATION REVIEW</p>
+      <h2 id="modal-name">Applicant</h2>
+      <p id="modal-id" class="muted"></p>
+      <div id="modal-details" class="detail-grid"></div>
+      <section aria-label="Submitted application details" id="review-details"></section>
+      <section aria-label="Supporting documents" id="review-documents"></section>
+      <section id="review-scoring" aria-label="Preliminary scoring" hidden></section>
+
+      <label for="new-status">Application status</label>
+      <select id="new-status">
+        <option value="submitted">Submitted</option>
+        <option value="under_review">Under Review</option>
+
+        <option value="approved">Approved</option>
+        <option value="declined">Declined</option>
+      </select>
+
+      <label for="internal-note">Internal staff note</label>
+      <textarea disabled id="internal-note" rows="3" placeholder="Private notes are not connected yet."></textarea>
+
+      <label for="decision-reason">Applicant-facing message / reason</label>
+      <textarea id="decision-reason" rows="3" maxlength="1000" placeholder="Write a brief message appropriate for the applicant."></textarea>
+
+      <p class="small-note">Status changes use the database workflow. Email notifications and private notes are not connected.</p>
+      <p id="review-message" role="status"></p><button class="primary-btn full-btn" id="save-review">Save review changes</button>
+    </div>
+  </div>
+
+  <script type="module" src="./js/staff-dashboard.js"></script>
+</body>
+</html>

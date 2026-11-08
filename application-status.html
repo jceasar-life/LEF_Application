@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Application Status | LIFE Empowerment Fund</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .status-page { min-height: 100dvh; background: linear-gradient(145deg, var(--cream), #f6f7ef 62%); }
+    .status-main { width: min(calc(100% - 2rem), 800px); margin: auto; padding: 2.5rem 0 4rem; }
+    .status-hero { padding: clamp(1.4rem, 5vw, 3rem); background: var(--green-dark); color: white; border-radius: 22px; }
+    .status-hero h1 { color: white; margin: .45rem 0; font-size: clamp(1.9rem, 5vw, 3rem); }
+    .status-nav { margin: 1.25rem 0; }
+    #submitted-applications section { box-shadow: 0 8px 24px #2a3a2d12; overflow-wrap: anywhere; }
+    #submitted-applications h2 { margin: 0 0 .7rem; color: var(--heading); }
+    #submitted-applications p:first-of-type { display: inline-block; margin: 0; padding: .4rem .8rem; border-radius: 2rem; background: #e5efe0; color: var(--green-dark); font-weight: 700; }
+    #submitted-applications p:last-child { background: #f2f5ef; border-left: 3px solid var(--green); padding: .8rem 1rem; margin-bottom: 0; white-space: pre-wrap; }
+    #status-message:empty { display: none; }
+  </style>
+  <link rel="stylesheet" href="lef-design.css">
+</head>
+<body class="status-page">
+  <header class="site-header">
+    <a class="brand" href="index.html">
+      <img class="lef-logo" src="assets/lef-logo.png" alt="Life Empowerment Fund" width="800" height="386">
+    </a>
+    <nav class="site-nav" aria-label="Primary">
+      <a class="nav-link" href="index.html">Home</a>
+      <a class="nav-link" href="application.html">My Application</a>
+      <a class="nav-link" href="application-status.html" aria-current="page">Application Status</a>
+    </nav>
+  </header>
+  <main class="status-main">
+    <header class="status-hero">
+      <h1>Application status</h1>
+      <p>Track your submitted applications and read updates from our team.</p>
+    </header>
+    <nav class="status-nav" aria-label="Application navigation">
+      <a href="application.html">← Back to application form</a>
+    </nav>
+    <p id="status-message" role="status">Loading your applications…</p>
+    <div id="submitted-applications"></div>
+  </main>
+  <script type="module" src="./js/application-status.js"></script>
+</body>
+</html>

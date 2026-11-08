@@ -42,9 +42,10 @@
       display: none;
     }
   </style>
+  <link rel="stylesheet" href="lef-design.css">
 </head>
 
-<body>
+<body class="lef-register">
   <div class="page">
     <span class="deco deco-ring-lg" aria-hidden="true"></span>
     <span class="deco deco-ring-sm" aria-hidden="true"></span>
@@ -52,26 +53,7 @@
 
     <header class="site-header">
       <a class="brand" href="./index.html">
-        <svg
-          aria-hidden="true"
-          width="40"
-          height="40"
-          viewBox="0 0 40 40"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <rect width="40" height="40" rx="12" fill="#2A6A35"/>
-          <path d="M20 30V19" stroke="white"
-                stroke-width="2" stroke-linecap="round"/>
-          <path d="M20 19c0-4-3-6.5-7-6.5 0 4 3 6.5 7 6.5z"
-                stroke="white" stroke-width="2"
-                stroke-linejoin="round"/>
-          <path d="M20 23c0-3.5 2.6-5.5 6.5-5.5 0 3.5-2.6 5.5-6.5 5.5z"
-                stroke="white" stroke-width="2"
-                stroke-linejoin="round"/>
-        </svg>
-
-        <span class="brand-name">LIFE Empowerment Fund</span>
+        <img class="lef-logo" src="assets/lef-logo.png" alt="Life Empowerment Fund" width="800" height="386">
       </a>
 
       <nav class="site-nav" aria-label="Primary">
@@ -184,9 +166,10 @@
           </div>
 
           <p class="form-error" id="register-error" role="alert"></p>
+          <p id="register-status" role="status" aria-live="polite"></p>
 
           <button class="btn-primary" type="submit">
-            Continue to application
+            Create account
           </button>
 
           <p class="alt-action">
@@ -195,8 +178,7 @@
           </p>
 
           <p class="demo-note">
-            Demo only: use sample credentials. No account is created,
-            and your password is not saved or sent.
+            Confirm your email address before signing in for the first time.
           </p>
         </form>
       </section>
@@ -276,7 +258,7 @@
       updateStrength();
     });
 
-    form.addEventListener('submit', function (event) {
+    form.addEventListener('submit', async function (event) {
       event.preventDefault();
 
       email.value = email.value.trim();
@@ -302,11 +284,32 @@
         return;
       }
 
-      // Demo navigation only. No credentials are stored or transmitted.
-      password.value = '';
-      confirmation.value = '';
-
-      window.location.href = './application.html';
+      const button = form.querySelector('button[type="submit"]');
+      if (button.disabled) return;
+      button.disabled = true;
+      button.textContent = 'Creating account…';
+      error.textContent = '';
+      const status = document.getElementById('register-status');
+      status.textContent = '';
+      try {
+        const { supabase } = await import('./js/supabaseClient.js');
+        const { error: signupError } = await supabase.auth.signUp({
+          email: email.value, password: password.value,
+          options: { emailRedirectTo: new URL('./index.html', location.href).href }
+        });
+        if (signupError) throw signupError;
+        // Always return to sign-in, even if confirmation settings later change.
+        await supabase.auth.signOut({ scope: 'local' });
+        password.value = '';
+        confirmation.value = '';
+        updateStrength();
+        status.textContent = 'Check your email to confirm your account, then return here and choose Sign in. If you already have an account, sign in with your existing password.';
+      } catch (signupError) {
+        error.textContent = signupError.message || 'Unable to create your account. Please try again.';
+      } finally {
+        button.disabled = false;
+        button.textContent = 'Create account';
+      }
     });
 
     // Clear password fields if this page returns from browser history.

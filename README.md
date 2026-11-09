@@ -13,4 +13,3 @@ Visit http://localhost:8000 to view borrower login. Registration and application
 
 **Start with [the integration guide](docs/INTEGRATION_GUIDE.md)** for deployment prerequisites, known missing features, and the demo test checklist. Database setup: [START_HERE](database/docs/START_HERE.md). Scoring limitations: [scoring rules](docs/scoring-rules.md).
 
-Never commit secret keys, applicant records, reviewer passwords, or private financial documents.

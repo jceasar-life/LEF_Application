@@ -778,89 +778,36 @@
 
             <p class="section-description">
               Check your information below. Use Edit to make changes.
-              Finish preview completes this demonstration only.
+              Review all information, then read and sign the required disclosures below.
             </p>
 
             <div id="review-content"></div>
-            <section class="review-section">
-              <h3>Submit a test application</h3>
-              <p>Official submission is not available yet. This sends a labeled TEST application to the staff queue and makes it read-only. It does not request a real loan or authorize a credit check.</p>
-              <label><input type="checkbox" id="demo-submit-confirm"> This is test data and I want to submit it for a staff workflow test.</label>
-              <button type="button" id="submit-demo" class="btn-primary">Submit TEST application</button>
-              <p id="submission-message" role="status">Available only to configured applicant test accounts.</p>
-            </section>
-            <section class="review-section" aria-labelledby="demo-sign-heading">
-              <h3 id="demo-sign-heading">Electronic signing — not configured</h3>
-              <p>Demo only. Sign a summary of your name, draft ID, loan type, and requested amount. This does not authorize a credit check or submit your application.</p>
-              <label><input type="checkbox" id="demo-sign-consent"> I understand this is a signing demonstration only.</label>
-              <div class="form-actions">
-                <button type="button" class="btn-primary" id="demo-sign" disabled>Sign demo document</button>
-                <button type="button" class="btn-secondary" id="demo-check" disabled>Check demo signature</button>
+            <section class="review-section" id="official-submission-section" aria-labelledby="official-submission-heading">
+              <h3 id="official-submission-heading">Application disclosures & electronic signature</h3>
+              <p class="section-description">Please read all required disclosures before signing. Submitting will make your application read-only and send it to LIFE Empowerment Fund for review. Submission does not guarantee approval.</p>
+              <p id="submission-availability" class="step-error" role="status" aria-live="polite">Checking whether official submissions are available…</p>
+              <div id="official-disclosures" aria-live="polite"></div>
+              <div class="field-group">
+                <label for="official-signer-name">Electronic signature — full legal name *</label>
+                <input class="field" id="official-signer-name" type="text" maxlength="200" autocomplete="name" placeholder="Type your first and last name" disabled>
+                <p class="field-hint">Typing your name and accepting the disclosures constitutes your electronic signature for this application.</p>
               </div>
-              <p id="demo-sign-message" role="status">Signing is not connected: the required server-side Edge Function has not been deployed. This does not block the explicitly labeled TEST submission, which is not an official signed application.</p>
+              <button type="button" class="btn-primary" id="submit-official" disabled>Sign & Submit Application</button>
+              <p id="official-submission-message" class="status-message" role="status" aria-live="polite"></p>
             </section>
 
             <div class="form-actions">
               <button class="btn-secondary" type="button" data-back>
                 Back
               </button>
-
-              <button class="btn-primary" type="submit">
-                Finish preview
-              </button>
             </div>
           </div>
         </form>
 
-        <!-- COMPLETION SCREEN -->
-        <section
-          class="preview-complete"
-          id="preview-complete"
-          aria-labelledby="completion-heading"
-          hidden
-        >
-          <svg
-            class="completion-icon"
-            viewBox="0 0 80 80"
-            fill="none"
-            aria-hidden="true"
-          >
-            <circle
-              cx="40"
-              cy="40"
-              r="38"
-              fill="currentColor"
-              opacity="0.12"
-            />
-            <path
-              d="M23 40L35 52L57 29"
-              stroke="currentColor"
-              stroke-width="5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-
-          <h2 id="completion-heading" tabindex="-1">
-            Application preview complete!
-          </h2>
-
-          <p>
-            You’ve completed all the steps in this demonstration.
-          </p>
-
-          <p>
-            Finishing this preview does not submit your application. Only changes saved with Save draft and files confirmed in Uploaded documents are stored.
-          </p>
-
-          <a class="btn-primary return-link" href="./index.html">
-            Return to sign in
-          </a>
-        </section>
 
         <p class="application-note" id="application-note">
           Use Save draft for your information and Upload selected files for documents.
-          Unsaved changes and selected files may be lost when you refresh. Nothing has been submitted.
+          Unsaved changes and selected files may be lost if you refresh. Your application is not submitted until you complete the signature step and receive a submission confirmation.
         </p>
       </section>
       </div>
@@ -922,7 +869,7 @@
       uploadedDocuments = event.detail.documents;
       if (currentStep === steps.length - 1) buildReview();
     });
-    let previewFinished = false;
+
 
     // Inline validation messages stay with the field that needs attention.
     function clearFieldError(field) {
@@ -1006,6 +953,8 @@
       new MutationObserver(() => reflectBackendError(element)).observe(element, {childList: true, characterData: true, subtree: true});
     }
 
+    document.addEventListener('lef:go-to-step', event => showStep(event.detail.index));
+
     function showStep(index) {
       currentStep = index;
 
@@ -1052,7 +1001,7 @@
     }
 
     function goNext() {
-      if (previewFinished) return;
+
 
       clearStepAlert(currentStep);
       const invalidField = getInvalidField(steps[currentStep]);
@@ -1339,43 +1288,11 @@
         !event.isComposing
       ) {
         event.preventDefault();
-        form.requestSubmit();
-      }
-    });
-
-    form.addEventListener('submit', function (event) {
-      event.preventDefault();
-
-      if (previewFinished) return;
-
-      if (currentStep < steps.length - 1) {
         goNext();
-        return;
       }
-
-      // Validate earlier sections before completing the preview.
-      for (let index = 0; index < steps.length - 1; index++) {
-        const invalidField = getInvalidField(steps[index]);
-
-        if (invalidField) {
-          showStep(index);
-          stepAlert(index, 'Correct the highlighted field before continuing.');
-          invalidField.reportValidity();
-          return;
-        }
-      }
-
-      previewFinished = true;
-
-      form.hidden = true;
-      stepLabel.hidden = true;
-      progress.hidden = true;
-      document.getElementById('application-heading').hidden = true;
-      document.getElementById('application-note').hidden = true;
-
-      document.getElementById('preview-complete').hidden = false;
-      document.getElementById('completion-heading').focus();
     });
+
+    form.addEventListener('submit', function (event) { event.preventDefault(); });
   </script>
 <script type="module" src="./js/application-draft.js"></script>
 </body>

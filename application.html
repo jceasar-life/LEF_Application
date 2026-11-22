@@ -205,6 +205,28 @@
       background: rgba(42, 106, 53, 0.08);
     }
 
+    .field-error {
+      display: block;
+      margin: 6px 0 0;
+      color: #9b2424;
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+
+    .field-error:empty, .step-error:empty { display: none; }
+
+    .field.field-invalid { border: 2px solid #9b2424; }
+
+    .step-error {
+      padding: 12px 14px;
+      margin: 10px 0 18px;
+      color: #831522;
+      background: #fff2f2;
+      border: 1px solid #dfb4b4;
+      border-radius: 10px;
+      line-height: 1.5;
+    }
+
     .error-message {
       color: #9b2424;
       font-size: 0.9rem;
@@ -429,9 +451,15 @@
                   name="phone"
                   type="tel"
                   autocomplete="tel"
+                  inputmode="numeric"
+                  maxlength="14"
+                  pattern="\([0-9]{3}\) [0-9]{3}-[0-9]{4}"
                   placeholder="(555) 123-4567"
+                  title="Enter exactly 10 digits."
+                  aria-describedby="phone-hint"
                   required
                 >
+                <p class="field-hint" id="phone-hint">Enter exactly 10 digits; formatting is added automatically.</p>
               </div>
 
               <div class="field-group full-width">
@@ -473,15 +501,10 @@
 
               <div class="field-group">
                 <label for="state">State *</label>
-                <input
-                  class="field"
-                  id="state"
-                  name="state"
-                  type="text"
-                  autocomplete="address-level1"
-                  placeholder="Texas"
-                  required
-                >
+                <select class="field" id="state" name="state" autocomplete="address-level1" required>
+                  <option value="TX" selected>Texas</option>
+                </select>
+                <p class="field-hint">LEF currently accepts Texas applications only.</p>
               </div>
 
               <div class="field-group">
@@ -901,6 +924,88 @@
     });
     let previewFinished = false;
 
+    // Inline validation messages stay with the field that needs attention.
+    function clearFieldError(field) {
+      if (!field) return;
+      field.setCustomValidity('');
+      field.classList.remove('field-invalid');
+      field.removeAttribute('aria-invalid');
+      const note = field.parentElement?.querySelector('.field-error');
+      if (note) note.textContent = '';
+    }
+
+    function showFieldError(field, text) {
+      if (!field) return;
+      clearFieldError(field);
+      field.setCustomValidity(text);
+      field.classList.add('field-invalid');
+      field.setAttribute('aria-invalid', 'true');
+      let note = field.parentElement.querySelector('.field-error');
+      if (!note) {
+        note = document.createElement('p');
+        note.className = 'field-error';
+        field.insertAdjacentElement('afterend', note);
+      }
+      note.textContent = text;
+      field.focus();
+    }
+
+    function stepAlert(index, text) {
+      const step = steps[index];
+      let alert = step.querySelector('.step-error');
+      if (!alert) {
+        alert = document.createElement('p');
+        alert.className = 'step-error';
+        alert.setAttribute('role', 'alert');
+        step.querySelector('h2')?.insertAdjacentElement('afterend', alert);
+      }
+      alert.textContent = text;
+    }
+
+    function clearStepAlert(index) {
+      const alert = steps[index]?.querySelector('.step-error');
+      if (alert) alert.textContent = '';
+    }
+
+    const phone = document.getElementById('phone');
+    function formatPhone() {
+      let digits = phone.value.replace(/\D/g, '');
+      if (digits.length === 11 && digits.startsWith('1')) digits = digits.slice(1);
+      digits = digits.slice(0, 10);
+      if (digits.length > 6) phone.value = `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+      else if (digits.length > 3) phone.value = `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+      else phone.value = digits;
+    }
+    phone.addEventListener('input', formatPhone);
+    phone.addEventListener('change', formatPhone);
+    document.getElementById('state').addEventListener('change', () => clearFieldError(document.getElementById('state')));
+
+    // Existing Supabase code writes errors into toolbar/upload status elements.
+    // Surface those errors on the relevant form step so they are not missed.
+    function reflectBackendError(messageElement) {
+      const text = messageElement.textContent.trim();
+      if (!/draft not fully saved|unable to load your draft|upload stopped|test submission not confirmed/i.test(text)) return;
+      let target = 0;
+      let field = null;
+      if (/texas|state/i.test(text)) field = document.getElementById('state');
+      else if (/phone|digits/i.test(text)) field = phone;
+      else if (/zip/i.test(text)) field = document.getElementById('zip');
+      else if (/loan type/i.test(text)) { target = 2; field = document.getElementById('loan-type'); }
+      else if (/loan amount/i.test(text)) { target = 2; field = document.getElementById('loan-amount'); }
+      else if (/document|upload|file/i.test(text)) target = 3;
+      if (field) target = steps.findIndex(step => step.contains(field));
+      if (target < 0) target = 0;
+      showStep(target);
+      stepAlert(target, text);
+      if (field) showFieldError(field, /texas|state/i.test(text) ? 'Only Texas addresses are accepted. The state is stored as TX.' :
+        /phone|digits/i.test(text) ? 'Enter exactly 10 digits for your phone number.' : text);
+      else steps[target].querySelector('.step-error')?.focus?.();
+    }
+    for (const id of ['draft-message', 'upload-message']) {
+      const element = document.getElementById(id);
+      new MutationObserver(() => reflectBackendError(element)).observe(element, {childList: true, characterData: true, subtree: true});
+    }
+
     function showStep(index) {
       currentStep = index;
 
@@ -924,36 +1029,36 @@
     }
 
     function getInvalidField(step) {
+      if (step.contains(phone)) formatPhone();
       const fields = step.querySelectorAll(
         'input:not([type="file"]), select, textarea'
       );
 
       for (const field of fields) {
-        field.setCustomValidity('');
-
-        const isTextField =
-          field.tagName === 'TEXTAREA' ||
-          field.type === 'text' ||
-          field.type === 'tel';
-
-        if (isTextField && field.required && !field.value.trim()) {
-          field.setCustomValidity('Please complete this field.');
+        clearFieldError(field);
+        let error = '';
+        if (field.required && !field.value.trim()) error = 'Please complete this field.';
+        if (field === phone && field.value.replace(/\D/g, '').length !== 10) {
+          error = 'Enter exactly 10 digits for your phone number.';
         }
-
+        if (field.id === 'state' && field.value !== 'TX') error = 'Only Texas addresses are accepted.';
+        if (error) { showFieldError(field, error); return field; }
         if (!field.checkValidity()) {
+          showFieldError(field, field.validationMessage || 'Please enter a valid value.');
           return field;
         }
       }
-
       return null;
     }
 
     function goNext() {
       if (previewFinished) return;
 
+      clearStepAlert(currentStep);
       const invalidField = getInvalidField(steps[currentStep]);
 
       if (invalidField) {
+        stepAlert(currentStep, 'Correct the highlighted field before continuing.');
         invalidField.reportValidity();
         return;
       }
@@ -1219,7 +1324,8 @@
 
     form.addEventListener('input', function (event) {
       if (typeof event.target.setCustomValidity === 'function') {
-        event.target.setCustomValidity('');
+        clearFieldError(event.target);
+        clearStepAlert(currentStep);
       }
     });
 
@@ -1253,6 +1359,7 @@
 
         if (invalidField) {
           showStep(index);
+          stepAlert(index, 'Correct the highlighted field before continuing.');
           invalidField.reportValidity();
           return;
         }

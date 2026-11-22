@@ -31,7 +31,9 @@ export function createOfficialSubmission({form,getClient,getUser,getState,getPen
   let finished = false;
   let busy = false;
   const setReady = ready => {
-    signer.disabled = !ready || finished;
+    // Allow the borrower to type their name while disclosures are pending.
+    // Never enable final submission until approved disclosures are loaded.
+    signer.disabled = finished;
     submit.disabled = !ready || finished || busy;
   };
 

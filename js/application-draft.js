@@ -8,7 +8,7 @@ let client, user, state;
 const keys = new Map();
 let pending = false;
 let dirty = false;
-form.addEventListener('input', () => {dirty = true;});
+form.addEventListener('input', event => {if(event.target.id !== 'official-signer-name' && !event.target.classList.contains('official-disclosure-checkbox')) dirty = true;});
 window.addEventListener('beforeunload', event => {
   const selection = {};
   document.dispatchEvent(new CustomEvent('lef:get-selected-files',{detail:selection}));
@@ -46,7 +46,6 @@ async function initialize() {
       message.textContent = 'Your latest saved draft is ready. Unsaved file selections must be added again. Uploaded documents are listed in Step 4.';
     } else message.textContent = 'Signed in. Enter your name, email, loan type, and loan amount to save a draft. Other fields may be completed later.';
     controls.forEach(control => {control.disabled = false;});
-    for (const id of ['demo-sign','demo-check']) document.getElementById(id).disabled = true;
     signout.disabled = false;
     button.disabled = false;
     dirty = false;
@@ -206,40 +205,32 @@ uploadButton.addEventListener('click', async () => {
     await refreshDocuments();
   } finally {
     controls.forEach((control,index)=>{control.disabled=previous[index];});
-    for (const id of ['demo-sign','demo-check']) document.getElementById(id).disabled = true;
     pending=false;
   }
 });
 
-// Signing is intentionally disabled until a reviewed server-side
-// DocuSign Edge Function exists. Never treat a browser checkbox as a signature.
-for (const id of ['demo-sign','demo-check']) {
-  const control = document.getElementById(id);
-  if (control) control.disabled = true;
-}
-
-const demoSubmit=document.getElementById('submit-demo');
-const submitMessage=document.getElementById('submission-message');
-let submissionAttempt=null,submitted=false;
-demoSubmit.addEventListener('click',async()=>{
- if(pending||!user||submitted)return;
- if(!document.getElementById('demo-submit-confirm').checked){submitMessage.textContent='Acknowledge the test submission first.';return;}
- const selection={};document.dispatchEvent(new CustomEvent('lef:get-selected-files',{detail:selection}));
- if(selection.files?.length){submitMessage.textContent='Upload or remove pending file selections first.';return;}
- if(!confirm('Submit this TEST application to the staff queue? It will become read-only. This is not a real loan application.'))return;
- let values;try{values=readDraftFields(form);}catch(e){submitMessage.textContent=e.message;return;}
- pending=true;
- const controls=[...document.querySelectorAll('input,select,textarea,button')];const previous=controls.map(c=>c.disabled);
- controls.forEach(c=>{c.disabled=true;});
- try{
-  // Once attempted, retry only the same ID; never create another application.
-  if(!submissionAttempt){submissionAttempt=await saveDraft(client,user,values,state,draftKey());dirty=false;}
-  const {submitDemo}=await import('./submission.js');
-  const id=await submitDemo(client,submissionAttempt);submitted=true;dirty=false;
-  submitMessage.textContent=`TEST application submitted (${id}). Staff visibility depends on reviewer permissions. This is not a loan approval or credit-check authorization.`;
-  message.textContent='Demo submitted. This application is now read-only.';
- }catch(error){submitMessage.textContent='Test submission not confirmed: '+error.message+' You can retry with the same application ID.';}
- finally{pending=false;controls.forEach((c,i)=>{c.disabled=submitted?true:previous[i];});for(const id of ['demo-sign','demo-check'])document.getElementById(id).disabled=true;signout.disabled=false;}
+// Official submission is a separate workflow. No test-submission or
+// browser-only e-signature can change the status of a real application.
+import {createOfficialSubmission} from './official-submission.js';
+const officialSubmission = createOfficialSubmission({
+  form,
+  getClient: () => client,
+  getUser: () => user,
+  getState: () => state,
+  getPending: () => pending,
+  setPending: value => { pending = value; },
+  getDirty: () => dirty,
+  clearDirty: () => { dirty = false; },
+  saveDraft: async () => {
+    const fields = readDraftFields(form);
+    return saveDraft(client, user, fields, state, draftKey());
+  },
+  listDocuments: async applicationId => listDocuments(client, applicationId)
 });
 
-initialize();
+// Start availability checks after authentication and draft restoration.
+// This does not bypass database enforcement when disclosure rules are missing.
+const initializeOriginal = initialize;
+// We call initialize() once and then refresh availability; the UI stays locked
+// if requirements have not been configured in Supabase.
+initializeOriginal().then(() => officialSubmission.refresh());

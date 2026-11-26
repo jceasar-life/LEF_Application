@@ -756,7 +756,7 @@
               </select>
             </div>
             <button type="button" class="btn-primary" id="upload-documents" disabled>Upload selected files</button>
-            <p id="upload-message" role="status" aria-live="polite">Save a draft before uploading.</p>
+            <p id="upload-message" role="status" aria-live="polite">Choose your files and a document type, then select Upload selected files. Your draft saves automatically.</p>
             <h3>Uploaded documents</h3>
             <ul id="uploaded-documents"></ul>
             <div class="form-actions">
@@ -782,10 +782,21 @@
             </p>
 
             <div id="review-content"></div>
+            <section class="review-section" id="client-preview-submission" hidden>
+              <h3>Sign &amp; Submit Application</h3>
+              <p>Client Preview. Use a fictional application. This does not submit a real loan application or authorize a credit check.</p>
+              <label><input type="checkbox" id="preview-acknowledgment"> I have reviewed this sample application and its supporting documents.</label>
+              <label for="preview-signer">Electronic signature — applicant name</label>
+              <input class="field" id="preview-signer" type="text" maxlength="200">
+              <p>Typing your name and selecting Sign &amp; Submit Application sends the sample application to the staff dashboard for review.</p>
+              <button type="button" class="btn-primary" id="submit-client-preview" disabled>Sign &amp; Submit Application</button>
+              <p id="preview-submission-message" class="status-message" role="status" aria-live="polite"></p>
+              <a id="preview-status-link" href="./application-status.html" hidden>View application status</a>
+            </section>
             <section class="review-section" id="official-submission-section" aria-labelledby="official-submission-heading">
               <h3 id="official-submission-heading">Application disclosures & electronic signature</h3>
               <p class="section-description">Please read all required disclosures before signing. Submitting will make your application read-only and send it to LIFE Empowerment Fund for review. Submission does not guarantee approval.</p>
-              <p id="submission-availability" class="step-error" role="status" aria-live="polite">Checking whether official submissions are available…</p>
+              <p id="submission-availability" class="status-message" role="status" aria-live="polite">Checking whether official submissions are available…</p>
               <div id="official-disclosures" aria-live="polite"></div>
               <div class="field-group">
                 <label for="official-signer-name">Electronic signature — full legal name *</label>

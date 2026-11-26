@@ -8,7 +8,7 @@ let client, user, state;
 const keys = new Map();
 let pending = false;
 let dirty = false;
-form.addEventListener('input', event => {if(event.target.id !== 'official-signer-name' && !event.target.classList.contains('official-disclosure-checkbox')) dirty = true;});
+form.addEventListener('input', event => {if(!event.target.closest('#client-preview-submission') && event.target.id !== 'official-signer-name' && !event.target.classList.contains('official-disclosure-checkbox')) dirty = true;});
 window.addEventListener('beforeunload', event => {
   const selection = {};
   document.dispatchEvent(new CustomEvent('lef:get-selected-files',{detail:selection}));
@@ -198,10 +198,10 @@ uploadButton.addEventListener('click', async () => {
       document.dispatchEvent(new CustomEvent('lef:file-uploaded',{detail:{file}}));
     }
     const listed=await refreshDocuments();
-    if(listed) uploadMessage.textContent=`${count} file(s) uploaded and linked to your draft. Your application has not been submitted.`;
+    if(listed) uploadMessage.textContent=`Uploaded to your draft: ${files.map(file => file.name).join(", ")}.`;
     message.textContent='Draft saved. Uploaded files are listed under Supporting documents.';
   } catch(error){
-    uploadMessage.textContent=`${count} file(s) completed. Upload stopped: ${error.message || 'Connection failed.'} Retry the remaining files with the same document type.`;
+    uploadMessage.textContent=`${count} of ${files.length} files uploaded. Upload stopped before completing ${files[count]?.name || 'the upload'}. ${error.message || 'Connection failed.'} Retry the remaining files with the same document type.`;
     await refreshDocuments();
   } finally {
     controls.forEach((control,index)=>{control.disabled=previous[index];});
@@ -211,7 +211,8 @@ uploadButton.addEventListener('click', async () => {
 
 // Official submission is a separate workflow. No test-submission or
 // browser-only e-signature can change the status of a real application.
-import {createOfficialSubmission} from './official-submission.js';
+import {createOfficialSubmission, validSignerName} from './official-submission.js';
+import {submitDemo} from './submission.js';
 const officialSubmission = createOfficialSubmission({
   form,
   getClient: () => client,
@@ -228,9 +229,62 @@ const officialSubmission = createOfficialSubmission({
   listDocuments: async applicationId => listDocuments(client, applicationId)
 });
 
-// Start availability checks after authentication and draft restoration.
-// This does not bypass database enforcement when disclosure rules are missing.
-const initializeOriginal = initialize;
-// We call initialize() once and then refresh availability; the UI stays locked
-// if requirements have not been configured in Supabase.
-initializeOriginal().then(() => officialSubmission.refresh());
+
+// The database independently checks the test account and draft ownership.
+const previewAccount = 'ecd54ad4-45bb-4fa2-9b9a-b085d07e93be';
+const preview = document.getElementById('client-preview-submission');
+const previewButton = document.getElementById('submit-client-preview');
+const previewSigner = document.getElementById('preview-signer');
+const previewAcknowledgment = document.getElementById('preview-acknowledgment');
+const previewMessage = document.getElementById('preview-submission-message');
+
+previewButton.addEventListener('click', async () => {
+  if (preview.hidden || pending || user?.id !== previewAccount) return;
+  const id = state?.application?.id;
+  const selection = {};
+  document.dispatchEvent(new CustomEvent('lef:get-selected-files', {detail: selection}));
+  if (!id || dirty || selection.files?.length) {
+    previewMessage.textContent = 'Save your draft and upload or remove any selected files before submitting.';
+    return;
+  }
+  if (!previewAcknowledgment.checked) {
+    previewMessage.textContent = 'Please acknowledge the sample application first.';
+    previewAcknowledgment.focus();
+    return;
+  }
+  if (!validSignerName(previewSigner.value, form.elements.namedItem('firstName').value,
+      form.elements.namedItem('lastName').value)) {
+    previewMessage.textContent = 'Type the first and last name shown on the sample application.';
+    previewSigner.focus();
+    return;
+  }
+
+  pending = true;
+  const controls = [...form.querySelectorAll('input,select,textarea,button')];
+  const disabled = controls.map(control => control.disabled);
+  controls.forEach(control => { control.disabled = true; });
+  previewMessage.textContent = 'Submitting sample application…';
+  try {
+    await submitDemo(client, id);
+  } catch (error) {
+    controls.forEach((control, index) => { control.disabled = disabled[index]; });
+    previewMessage.textContent = 'Test submission not confirmed: ' + (error.message || 'Please retry.');
+    return;
+  } finally {
+    pending = false;
+  }
+  dirty = false;
+  signout.disabled = false;
+  previewMessage.textContent = `Sample application submitted. Reference: ${id}`;
+  document.getElementById('preview-status-link').hidden = false;
+});
+
+initialize().then(() => {
+  if (state && user?.id === previewAccount && new URLSearchParams(location.search).get('preview') === '1') {
+    document.getElementById('official-submission-section').hidden = true;
+    preview.hidden = false;
+    previewButton.disabled = false;
+    return;
+  }
+  officialSubmission.refresh();
+});
